@@ -9,10 +9,6 @@ document.querySelector('form').addEventListener('submit', (event) => {
 		// "createPokemon" skapar de img-element som varje pokemon tilldelas.
 		createPokemon();
 
-		// "playBattleAudio() kör igång ljudfilen"
-		playBattleAudio();
-		// "startGame()" kör "movePokemon()" samt startar "startTimeInMilliseconds()".
-
 		// En animation på drygt tre sekunder som skapar en svart spiral som fyller hela skärmen innan man får se spelfältet.
 		canvasRef.classList.toggle('d-none');
 		drawOnCanvas();
@@ -44,6 +40,9 @@ document.querySelector('#playAgainBtn').addEventListener('click', () => {
 	oGameData.init();
 	victoryAudioRef.pause();
 	victoryAudioRef.currentTime = 0;
+
+	// Lägger tillbaka Play music knappen
+	soundBtnRef.classList.toggle('d-none');
 
 	// Töm highScore-listan
 	const highscoreListRef = document.querySelector('#highscoreList');
@@ -181,27 +180,21 @@ function startGame() {
 		oGameData.startTimeInMilliseconds();
 	}, 50);
 }
+soundBtnRef.addEventListener('click', () => {
+	if (battleAudioRef.paused) {
+		console.log('clicked playBattleaudio');
 
-function playBattleAudio() {
-	soundBtnRef.addEventListener('click', () => {
-		if (soundBtnRef.textContent === 'Play music') {
-			// Start av ljudfil under spelets gång
-			console.log('play music');
-			battleAudioRef.loop = true;
-			battleAudioRef.volume = 0.5;
-			battleAudioRef.currentTime = 0.25;
-			battleAudioRef.play();
-			soundBtnRef.textContent = 'Stop music';
-		} else if (soundBtnRef.textContent === 'Stop music') {
-			console.log('stop music');
-
-			// Stoppa spelmusiken
-			battleAudioRef.pause();
-			battleAudioRef.currentTime = 0;
-			soundBtnRef.textContent = 'Play music';
-		}
-	});
-}
+		battleAudioRef.loop = true;
+		battleAudioRef.volume = 0.2;
+		battleAudioRef.currentTime = 0.25;
+		battleAudioRef.play();
+		soundBtnRef.textContent = 'Stop music';
+	} else {
+		battleAudioRef.pause();
+		battleAudioRef.currentTime = 0;
+		soundBtnRef.textContent = 'Play music';
+	}
+});
 
 // Funktion för att ge alla pokemon en ny position efter varje 3e sekund
 function movePokemon() {
@@ -256,36 +249,30 @@ function endGame() {
 	// Funktion för att visa highScorerutan anropas där det returnerade arrayen från funktionen updateLocalStorage skickas med som argument
 	viewHighScore(updateLocalStorage());
 }
+victorySoundBtnRef.addEventListener('click', () => {
+	if (victoryAudioRef.paused) {
+		// Starta victory-musiken
+		victoryAudioRef.volume = 0.2;
+		victoryAudioRef.currentTime = 1;
+		victoryAudioRef.play();
 
-function playVictorySong() {
-	console.log('victory', victorySoundBtnRef.textContent);
+		// Ändra texten på knappen
+		victorySoundBtnRef.textContent = 'Stop victory music';
+	} else {
+		// Om musiken spelas, pausa musiken
+		victoryAudioRef.pause();
+		victoryAudioRef.currentTime = 0; // Återställ till början
 
-	victorySoundBtnRef.addEventListener('click', () => {
-		if (victoryAudioRef.paused) {
-			// Starta victory-musiken
-			victoryAudioRef.volume = 0.5; // Sätt volym
-			victoryAudioRef.currentTime = 0; // Börja från början
-			victoryAudioRef.play(); // Spela upp ljudet
-
-			// Ändra texten på knappen
-			victorySoundBtnRef.textContent = 'Stop victory music';
-		} else {
-			// Om musiken spelas, pausa musiken
-			victoryAudioRef.pause();
-			victoryAudioRef.currentTime = 0; // Återställ till början
-
-			// Ändra texten på knappen tillbaka
-			victorySoundBtnRef.textContent = 'Play victory music';
-		}
-	});
-}
+		// Ändra texten på knappen tillbaka
+		victorySoundBtnRef.textContent = 'Play victory music';
+	}
+});
 
 // Funktion för att visa High Score
 function viewHighScore(highScore) {
 	// Togglar av display none så att High Score kan visas
 	document.querySelector('#highScore').classList.toggle('d-none');
 
-	playVictorySong();
 	// Vinstmeddelandet för aktuella spelet
 	document.querySelector(
 		'#winMsg'
