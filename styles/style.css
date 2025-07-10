@@ -38,6 +38,19 @@
 	color: #ffde00;
 	-webkit-text-stroke: 1px #3b4cca;
 	font-size: 1rem;
+	animation: scaleUp 1.8s ease-in-out infinite;
+}
+
+@keyframes scaleUp {
+	0% {
+		transform: scale(1);
+	}
+	50% {
+		transform: scale(1.05);
+	}
+	100% {
+		transform: scale(1);
+	}
 }
 
 /* Ser till så att bilderna får korrekt storlek och deras rörelse animeras */
